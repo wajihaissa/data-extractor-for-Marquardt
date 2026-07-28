@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Extraction page</title>
+   <link rel="stylesheet" href="style.css">
+</head>
+<body>  <div class="feature-card" id="extract">
+        <div class="feature-icon">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none"><path d="M12 3v13" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/><path d="m7 12 5 5 5-5" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/><path d="M5 20h14" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>
+        </div>
+        <div class="feature-tags"><span class="tag">pdf</span><span class="tag">ocr</span><span class="tag">.xlsx export</span></div>
+        <h3>Extract data from report</h3>
+        <p>Pick a test-report PDF, choose which channels to read, and run the extraction.</p>
+
+        <div class="upload-box">
+          <svg width="28" height="28" viewBox="0 0 24 24" fill="none"><path d="M12 3v13M12 3l-4 4M12 3l4 4" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/><path d="M4 17v2a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-2" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>
+          <div class="upload-copy">
+            <b>Choose a PDF report</b>
+            <span>Bench test-report exports, one file at a time</span>
+          </div>
+          <button class="btn-choose" onclick="choosePdf()">Browse…</button>
+        </div>
+
+        <div class="chosen-file" id="chosen-file-wrap">
+          <span class="dot"></span>
+          <span id="chosen-file-name">—</span>
+        </div>
+
+        <div class="channel-row" id="channel-row">
+          <label class="channel-toggle"><input type="checkbox" value="1" checked> Channel 1</label>
+          <label class="channel-toggle"><input type="checkbox" value="2" checked> Channel 2</label>
+          <label class="channel-toggle"><input type="checkbox" value="3" checked> Channel 3</label>
+          <label class="channel-toggle"><input type="checkbox" value="4" checked> Channel 4</label>
+        </div>
+
+        <button class="btn-primary" id="run-extract-btn" onclick="runExtraction()" disabled style="width:100%; justify-content:center;">
+          Choose a PDF first
+        </button>
+
+        <div class="status-line" id="extract-status"></div>
+        <div class="result-actions" id="result-actions">
+          <button class="btn-small primary" id="open-result-btn">Open report</button>
+          <button class="btn-small ghost" onclick="document.getElementById('reports').scrollIntoView({behavior:'smooth'}); loadReports();">View in history</button>
+        </div>
+      </div>
+
+    </div>
+<script>
+    
+  async function choosePdf() {
+    if (!apiReady()) { setStatus('Open this inside the desktop app to browse files.', 'error'); return; }
+    const path = await window.pywebview.api.select_pdf_file();
+    if (!path) return;
+    chosenPdfPath = path;
+    const name = path.split(/[\\/]/).pop();
+    document.getElementById('chosen-file-name').textContent = name;
+    document.getElementById('chosen-file-wrap').style.display = 'flex';
+    const btn = document.getElementById('run-extract-btn');
+    btn.disabled = false;
+    btn.textContent = 'Run extraction';
+    clearStatus();
+    document.getElementById('result-actions').classList.remove('show');
+  }
+
+  function selectedChannels() {
+    return Array.from(document.querySelectorAll('#channel-row input:checked')).map(c => parseInt(c.value, 10));
+  }
+    async function runExtraction() {
+    if (!chosenPdfPath) return;
+    const channels = selectedChannels();
+    if (channels.length === 0) { setStatus('Select at least one channel.', 'error'); return; }
+
+    const btn = document.getElementById('run-extract-btn');
+    btn.disabled = true;
+    btn.textContent = 'Reading graph…';
+    document.getElementById('result-actions').classList.remove('show');
+    setStatus('Rendering pages and tracing curves — this can take a moment per channel…', 'info');
+
+    try {
+      const result = await window.pywebview.api.extract_from_pdf(chosenPdfPath, channels);
+      if (result && result.status === 'ok') {
+        setStatus(`Done — saved ${result.report.output_name}`, 'success');
+        const openBtn = document.getElementById('open-result-btn');
+        openBtn.onclick = () => window.pywebview.api.open_report(result.report.output_path);
+        document.getElementById('result-actions').classList.add('show');
+        loadReports();
+      } else {
+        setStatus((result && result.message) || 'Extraction failed.', 'error');
+      }
+    } catch (err) {
+      setStatus('Extraction failed: ' + err, 'error');
+    } finally {
+      btn.disabled = false;
+      btn.textContent = 'Run extraction';
+    }
+  }
+</script>    
+</body>
+
+</html>

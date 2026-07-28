@@ -1,0 +1,17 @@
+[
+  {
+    "source_pdf": "C:\\Users\\MSI\\Downloads\\Statistics_VT1004_1_SN251C_PC3EC01.pdf",
+    "source_name": "Statistics_VT1004_1_SN251C_PC3EC01.pdf",
+    "output_path": "C:\\Users\\MSI\\OneDrive\\Bureau\\data_extractor\\marquardt_reports\\Statistics_VT1004_1_SN251C_PC3EC01_20260727-103456.xlsx",
+    "output_name": "Statistics_VT1004_1_SN251C_PC3EC01_20260727-103456.xlsx",
+    "channels": [
+      1,
+      2,
+      3,
+      4
+    ],
+    "timestamp": "2026-07-27 10:34:56",
+    "reference": "1004",
+    "number": "1"
+  }
+]
