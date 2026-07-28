@@ -1,0 +1,377 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Marquardt — Vector Data Extraction</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<div class="env-banner" id="env-banner">Running in a browser preview — open this page inside the Marquardt desktop app to extract real PDFs.</div>
+
+<header>
+  <nav>
+    <div class="brand">
+      <img src="Marquardt-Logo-Symbol-removebg-preview.png" alt="Marquardt logo" width="28" height="28">
+      <span class="brand-name">Marquardt</span>
+    </div>
+   
+    <button class="nav-cta" onclick="document.getElementById('extract').scrollIntoView({behavior:'smooth'})">Upload PDF</button>
+  </nav>
+</header>
+
+<section class="hero">
+  <div class="wrap hero-grid">
+    <div>
+      <div class="eyebrow"><span class="dot"></span> OCR-based VT Calbration Data extraction</div>
+      <h1>Turn test&nbsp;report graphs into <em>usable VT Calibration data</em>.</h1>
+      <p class="lede">Upload a component test-report PDF and Marquardt reads the plotted curves with OCR, then hands you back clean, structured  data — ready for QA, comparison, or re-analysis. No manual digitizing.</p>
+      <div class="hero-actions">
+        <button class="btn-primary" onclick="document.getElementById('extract').scrollIntoView({behavior:'smooth'})">Extract from a PDF →</button>
+        <button class="btn-ghost" onclick="document.getElementById('reports').scrollIntoView({behavior:'smooth'})">Check existing reports</button>
+      </div>
+    </div>
+
+    <div class="scope">
+      <div class="scope-head">
+        <span>graph_04.pdf · channel A</span>
+        <span class="live">reading</span>
+      </div>
+      <div class="scope-canvas">
+        <svg viewBox="0 0 600 260" preserveAspectRatio="none">
+          <g>
+            <line x1="0" y1="43" x2="600" y2="43" class="grid-line"/>
+            <line x1="0" y1="86" x2="600" y2="86" class="grid-line"/>
+            <line x1="0" y1="129" x2="600" y2="129" class="grid-line"/>
+            <line x1="0" y1="172" x2="600" y2="172" class="grid-line"/>
+            <line x1="0" y1="215" x2="600" y2="215" class="grid-line"/>
+            <line x1="75" y1="0" x2="75" y2="260" class="grid-line"/>
+            <line x1="150" y1="0" x2="150" y2="260" class="grid-line"/>
+            <line x1="225" y1="0" x2="225" y2="260" class="grid-line"/>
+            <line x1="300" y1="0" x2="300" y2="260" class="grid-line"/>
+            <line x1="375" y1="0" x2="375" y2="260" class="grid-line"/>
+            <line x1="450" y1="0" x2="450" y2="260" class="grid-line"/>
+            <line x1="525" y1="0" x2="525" y2="260" class="grid-line"/>
+          </g>
+          <text x="8" y="16" class="axis-label">+2.0V</text>
+          <text x="8" y="252" class="axis-label">−2.0V</text>
+
+          <path class="trace-path" d="M0,190 C40,150 60,60 100,70 C140,80 150,190 190,195 C230,200 245,40 290,45 C330,50 350,160 390,150 C430,140 450,90 490,95 C530,100 560,150 600,140"/>
+
+          <circle class="pt p1" cx="100" cy="70" r="3"/>
+          <circle class="pt p2" cx="190" cy="195" r="3"/>
+          <circle class="pt p3" cx="290" cy="45" r="3"/>
+          <circle class="pt p4" cx="390" cy="150" r="3"/>
+          <circle class="pt p5" cx="490" cy="95" r="3"/>
+          <circle class="pt p6" cx="560" cy="145" r="3"/>
+
+          <g class="scan-line">
+            <line x1="4" y1="0" x2="4" y2="260" stroke-width="1.5"/>
+          </g>
+        </svg>
+      </div>
+      <div class="scope-readout">
+        <span>x1 <b>0.42V</b></span>
+        <span>y1 <b>+1.14V</b></span>
+        <span>x2 <b>1.08V</b></span>
+        <span>y2 <b>−0.97V</b></span>
+        <span>pts <b>128</b></span>
+        <span>fmt <b>.xlsx</b></span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="how">
+  <div class="wrap">
+    <div class="section-head">
+      <span class="section-tag">Process</span>
+      <h2>From scanned graph to raw vector, in three steps.</h2>
+      <p>Built for electronic component test reports — the kind of curve-heavy PDFs that come out of vector test equipment and can't be copy-pasted.</p>
+    </div>
+    <div class="steps">
+      <div class="step">
+        <span class="step-num">01</span>
+        <h3>Upload the report</h3>
+        <p>Pick the test-report PDF as exported from your bench equipment or lab archive.</p>
+        <div class="step-arrow">→</div>
+      </div>
+      <div class="step">
+        <span class="step-num">02</span>
+        <h3>OCR reads the graph</h3>
+        <p>The plotted curve, markers, and axis labels are recognised and traced point by point.</p>
+        <div class="step-arrow">→</div>
+      </div>
+      <div class="step">
+        <span class="step-num">03</span>
+        <h3>Export vector data</h3>
+        <p>Get a formatted Excel report per channel, saved locally and kept in your report history.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="features" id="sections">
+  <div class="wrap">
+    <div class="section-head">
+      <span class="section-tag">Two ways in</span>
+      <h2>What do you need to do?</h2>
+    </div>
+    <div class="feature-grid">
+
+      <!-- CHECK REPORTS -->
+      <div class="feature-card" id="reports">
+        <div class="feature-icon">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none"><path d="M6 3h9l5 5v13a1 1 0 0 1-1 1H6a1 1 0 0 1-1-1V4a1 1 0 0 1 1-1Z" stroke="currentColor" stroke-width="1.6"/><path d="M9 13h6M9 17h6M9 9h2" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>
+        </div>
+        <div class="feature-tags"><span class="tag">history</span><span class="tag">local</span><span class="tag">.xlsx</span></div>
+        <h3>Check reports</h3>
+        <p>Every extraction you've run, kept on this machine — reopen the workbook or jump straight to the folder it's saved in.</p>
+
+        <div class="filter-row">
+          <input type="text" class="filter-input search" id="filter-search" placeholder="Search filename, reference, number…" oninput="applyFilters()">
+          <input type="text" class="filter-input" id="filter-reference" placeholder="Reference (e.g. 1007)" oninput="applyFilters()">
+          <input type="text" class="filter-input" id="filter-number" placeholder="Number (e.g. 1)" oninput="applyFilters()">
+        </div>
+
+        <div class="reports-head">
+          <span class="mono" style="font-size:12px; color:var(--ink-soft);" id="reports-count">0 reports</span>
+          <div style="display:flex; gap:8px;">
+            <button class="btn-small" onclick="clearFilters()">Clear filters</button>
+            <button class="btn-small" onclick="loadReports()">Refresh</button>
+            <button class="btn-small" onclick="revealFolder()">Open folder</button>
+          </div>
+        </div>
+        <div id="reports-list">
+          <div class="report-empty">No reports yet — run an extraction to see it here.</div>
+        </div>
+      </div>
+
+      <!-- EXTRACT DATA -->
+      <div class="feature-card" id="extract">
+        <div class="feature-icon">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none"><path d="M12 3v13" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/><path d="m7 12 5 5 5-5" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/><path d="M5 20h14" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>
+        </div>
+        <div class="feature-tags"><span class="tag">pdf</span><span class="tag">ocr</span><span class="tag">.xlsx export</span></div>
+        <h3>Extract data from report</h3>
+        <p>Pick a test-report PDF, choose which channels to read, and run the extraction.</p>
+
+        <div class="upload-box">
+          <svg width="28" height="28" viewBox="0 0 24 24" fill="none"><path d="M12 3v13M12 3l-4 4M12 3l4 4" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/><path d="M4 17v2a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-2" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>
+          <div class="upload-copy">
+            <b>Choose a PDF report</b>
+            <span>Bench test-report exports, one file at a time</span>
+          </div>
+          <button class="btn-choose" onclick="choosePdf()">Browse…</button>
+        </div>
+
+        <div class="chosen-file" id="chosen-file-wrap">
+          <span class="dot"></span>
+          <span id="chosen-file-name">—</span>
+        </div>
+
+        <div class="channel-row" id="channel-row">
+          <label class="channel-toggle"><input type="checkbox" value="1" checked> Channel 1</label>
+          <label class="channel-toggle"><input type="checkbox" value="2" checked> Channel 2</label>
+          <label class="channel-toggle"><input type="checkbox" value="3" checked> Channel 3</label>
+          <label class="channel-toggle"><input type="checkbox" value="4" checked> Channel 4</label>
+        </div>
+
+        <button class="btn-primary" id="run-extract-btn" onclick="runExtraction()" disabled style="width:100%; justify-content:center;">
+          Choose a PDF first
+        </button>
+
+        <div class="status-line" id="extract-status"></div>
+        <div class="result-actions" id="result-actions">
+          <button class="btn-small primary" id="open-result-btn">Open report</button>
+          <button class="btn-small ghost" onclick="document.getElementById('reports').scrollIntoView({behavior:'smooth'}); loadReports();">View in history</button>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<section class="spec-strip">
+  <div class="wrap spec-grid">
+    <div class="spec"><b>PDF</b><span>Source format read</span></div>
+    <div class="spec"><b>OCR</b><span>Curve digitizing method</span></div>
+    <div class="spec"><b>Vector</b><span>Output data type</span></div>
+    <div class="spec"><b>.XLSX</b><span>Export format</span></div>
+  </div>
+</section>
+
+<footer>
+  <div class="wrap foot-row">
+    <div class="foot-brand">
+      <svg width="20" height="20" viewBox="0 0 60 60" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <path d="M30 4C16.2 4 5 13.9 5 26.1c0 6.6 3.3 12.5 8.5 16.6-.4 3.2-1.7 6.5-3.9 9.3 4.3-.5 8.5-2.3 11.9-4.9 2.7.9 5.6 1.4 8.5 1.4 13.8 0 25-9.9 25-22.1S43.8 4 30 4z" fill="#009A9B"/>
+      </svg>
+      Marquardt
+    </div>
+    <span>Vector data extraction for electronic component testing.</span>
+  </div>
+</footer>
+
+<script>
+  let chosenPdfPath = null;
+
+  function apiReady() {
+    return !!(window.pywebview && window.pywebview.api);
+  }
+
+  function setStatus(text, type) {
+    const el = document.getElementById('extract-status');
+    el.className = 'status-line show ' + type;
+    el.innerHTML = type === 'info'
+      ? `<span class="spinner"></span><span>${text}</span>`
+      : `<span>${text}</span>`;
+  }
+
+  function clearStatus() {
+    const el = document.getElementById('extract-status');
+    el.className = 'status-line';
+    el.innerHTML = '';
+  }
+
+  async function choosePdf() {
+    if (!apiReady()) { setStatus('Open this inside the desktop app to browse files.', 'error'); return; }
+    const path = await window.pywebview.api.select_pdf_file();
+    if (!path) return;
+    chosenPdfPath = path;
+    const name = path.split(/[\\/]/).pop();
+    document.getElementById('chosen-file-name').textContent = name;
+    document.getElementById('chosen-file-wrap').style.display = 'flex';
+    const btn = document.getElementById('run-extract-btn');
+    btn.disabled = false;
+    btn.textContent = 'Run extraction';
+    clearStatus();
+    document.getElementById('result-actions').classList.remove('show');
+  }
+
+  function selectedChannels() {
+    return Array.from(document.querySelectorAll('#channel-row input:checked')).map(c => parseInt(c.value, 10));
+  }
+
+  async function runExtraction() {
+    if (!chosenPdfPath) return;
+    const channels = selectedChannels();
+    if (channels.length === 0) { setStatus('Select at least one channel.', 'error'); return; }
+
+    const btn = document.getElementById('run-extract-btn');
+    btn.disabled = true;
+    btn.textContent = 'Reading graph…';
+    document.getElementById('result-actions').classList.remove('show');
+    setStatus('Rendering pages and tracing curves — this can take a moment per channel…', 'info');
+
+    try {
+      const result = await window.pywebview.api.extract_from_pdf(chosenPdfPath, channels);
+      if (result && result.status === 'ok') {
+        setStatus(`Done — saved ${result.report.output_name}`, 'success');
+        const openBtn = document.getElementById('open-result-btn');
+        openBtn.onclick = () => window.pywebview.api.open_report(result.report.output_path);
+        document.getElementById('result-actions').classList.add('show');
+        loadReports();
+      } else {
+        setStatus((result && result.message) || 'Extraction failed.', 'error');
+      }
+    } catch (err) {
+      setStatus('Extraction failed: ' + err, 'error');
+    } finally {
+      btn.disabled = false;
+      btn.textContent = 'Run extraction';
+    }
+  }
+
+  async function loadReports() {
+    if (!apiReady()) return;
+    const reports = await window.pywebview.api.list_reports();
+    window._reportsCache = reports;
+    applyFilters();
+  }
+
+  function applyFilters() {
+    const all = window._reportsCache || [];
+    const q = (document.getElementById('filter-search').value || '').trim().toLowerCase();
+    const refFilter = (document.getElementById('filter-reference').value || '').trim();
+    const numFilter = (document.getElementById('filter-number').value || '').trim();
+
+    const filtered = all.filter(r => {
+      if (refFilter && (r.reference || '') !== refFilter) return false;
+      if (numFilter && (r.number || '') !== numFilter) return false;
+      if (q) {
+        const haystack = [r.source_name, r.reference, r.number].filter(Boolean).join(' ').toLowerCase();
+        if (!haystack.includes(q)) return false;
+      }
+      return true;
+    });
+
+    renderReports(filtered, all.length);
+  }
+
+  function clearFilters() {
+    document.getElementById('filter-search').value = '';
+    document.getElementById('filter-reference').value = '';
+    document.getElementById('filter-number').value = '';
+    applyFilters();
+  }
+
+  function renderReports(reports, totalCount) {
+    const listEl = document.getElementById('reports-list');
+    const countEl = document.getElementById('reports-count');
+
+    const isFiltered = totalCount !== undefined && totalCount !== reports.length;
+    countEl.textContent = isFiltered
+      ? `${reports.length} of ${totalCount} report${totalCount === 1 ? '' : 's'}`
+      : `${reports.length} report${reports.length === 1 ? '' : 's'}`;
+
+    if (!reports.length) {
+      listEl.innerHTML = `<div class="report-empty">${totalCount ? 'No reports match those filters.' : 'No reports yet — run an extraction to see it here.'}</div>`;
+      return;
+    }
+
+    listEl.innerHTML = reports.map(r => `
+      <div class="report-row">
+        <div class="report-icon">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none"><path d="M6 3h9l5 5v13a1 1 0 0 1-1 1H6a1 1 0 0 1-1-1V4a1 1 0 0 1 1-1Z" stroke="currentColor" stroke-width="1.6"/></svg>
+        </div>
+        <div class="report-meta">
+          <b>${r.source_name}</b>
+          <span>${r.timestamp} · ch ${r.channels.join(',')}</span>
+        </div>
+        ${r.reference ? `<span class="report-ref">VT${r.reference}_${r.number}</span>` : ''}
+        <button class="report-open" onclick='openReportByPath(${JSON.stringify(r.output_path)})'>Open</button>
+      </div>
+    `).join('');
+  }
+
+  function openReportByPath(path) {
+    window.pywebview.api.open_report(path);
+  }
+
+  async function revealFolder() {
+    if (!apiReady()) return;
+    await window.pywebview.api.reveal_reports_folder();
+  }
+
+  function init() {
+    if (apiReady()) {
+      document.getElementById('env-banner').classList.remove('show');
+      loadReports();
+    } else {
+      document.getElementById('env-banner').classList.add('show');
+    }
+  }
+
+  window.addEventListener('pywebviewready', init);
+  document.addEventListener('DOMContentLoaded', () => {
+    // fallback in case pywebviewready already fired or we're in a plain browser
+    setTimeout(init, 300);
+  });
+</script>
+
+</body>
+</html>
