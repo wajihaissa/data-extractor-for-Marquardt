@@ -7,6 +7,17 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="style.css">
+<style>
+  /* Warning alert styling for faulty reports */
+  .status-line.warning {
+    color: #b45309;
+    background-color: #fffbeb;
+    border: 1px solid #fde68a;
+    padding: 10px 14px;
+    border-radius: 6px;
+    font-weight: 500;
+  }
+</style>
 </head>
 <body>
 
@@ -18,17 +29,15 @@
       <img src="Marquardt-Logo-Symbol-removebg-preview.png" alt="Marquardt logo" width="28" height="28">
       <span class="brand-name">Marquardt</span>
     </div>
-   
-    <button class="nav-cta" onclick="document.getElementById('extract').scrollIntoView({behavior:'smooth'})">Upload PDF</button>
   </nav>
 </header>
 
 <section class="hero">
   <div class="wrap hero-grid">
     <div>
-      <div class="eyebrow"><span class="dot"></span> OCR-based VT Calbration Data extraction</div>
+      <div class="eyebrow"><span class="dot"></span> OCR-based VT Calibration Data extraction</div>
       <h1>Turn test&nbsp;report graphs into <em>usable VT Calibration data</em>.</h1>
-      <p class="lede">Upload a component test-report PDF and Marquardt reads the plotted curves with OCR, then hands you back clean, structured  data — ready for QA, comparison, or re-analysis. No manual digitizing.</p>
+      <p class="lede">Upload a component test-report PDF and Marquardt reads the plotted curves with OCR, then hands you back clean, structured data — ready for QA, comparison, or re-analysis. No manual digitizing.</p>
       <div class="hero-actions">
         <button class="btn-primary" onclick="document.getElementById('extract').scrollIntoView({behavior:'smooth'})">Extract from a PDF →</button>
         <button class="btn-ghost" onclick="document.getElementById('reports').scrollIntoView({behavior:'smooth'})">Check existing reports</button>
@@ -199,7 +208,7 @@
   <div class="wrap spec-grid">
     <div class="spec"><b>PDF</b><span>Source format read</span></div>
     <div class="spec"><b>OCR</b><span>Curve digitizing method</span></div>
-    <div class="spec"><b>Vector</b><span>Output data type</span></div>
+    <div class="spec"><b>VT</b><span>Calibration Output data type</span></div>
     <div class="spec"><b>.XLSX</b><span>Export format</span></div>
   </div>
 </section>
@@ -226,9 +235,13 @@
   function setStatus(text, type) {
     const el = document.getElementById('extract-status');
     el.className = 'status-line show ' + type;
-    el.innerHTML = type === 'info'
-      ? `<span class="spinner"></span><span>${text}</span>`
-      : `<span>${text}</span>`;
+    if (type === 'info') {
+      el.innerHTML = `<span class="spinner"></span><span>${text}</span>`;
+    } else if (type === 'warning') {
+      el.innerHTML = `<span>⚠️ <b>Faulty Report Detected:</b> ${text}</span>`;
+    } else {
+      el.innerHTML = `<span>${text}</span>`;
+    }
   }
 
   function clearStatus() {
@@ -275,6 +288,8 @@
         openBtn.onclick = () => window.pywebview.api.open_report(result.report.output_path);
         document.getElementById('result-actions').classList.add('show');
         loadReports();
+      } else if (result && result.status === 'faulty_report') {
+        setStatus(result.message, 'warning');
       } else {
         setStatus((result && result.message) || 'Extraction failed.', 'error');
       }
@@ -368,7 +383,6 @@
 
   window.addEventListener('pywebviewready', init);
   document.addEventListener('DOMContentLoaded', () => {
-    // fallback in case pywebviewready already fired or we're in a plain browser
     setTimeout(init, 300);
   });
 </script>

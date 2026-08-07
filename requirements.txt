@@ -1,6 +1,0 @@
-pymupdf
-numpy
-pillow
-pywebview
-pyinstaller
-pytesseract

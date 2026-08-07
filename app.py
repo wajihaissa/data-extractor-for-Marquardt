@@ -21,6 +21,7 @@ def parse_reference(filename):
         return None, None
     return match.group(1), match.group(2)
 
+
 # Make sure extractor.py (sitting next to this file, or bundled by PyInstaller) is importable
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 import extractor  # noqa: E402
@@ -113,6 +114,9 @@ class Api:
                 first_chart_page=first_chart_page,
                 channels=channels,
             )
+        except getattr(extractor, "FaultyReportError", ()) as exc:
+            # Catch faulty report exception (e.g. multiple red dots/stacked readings)
+            return {"status": "faulty_report", "message": str(exc)}
         except Exception as exc:
             traceback.print_exc()
             return {"status": "error", "message": str(exc)}
@@ -150,9 +154,6 @@ class Api:
         return history
 
     def search_reports(self, query="", reference="", number=""):
-        """Server-side filter, kept in sync with the JS-side filtering so the
-        same logic works if the report list ever grows large enough that
-        client-side filtering stops being practical."""
         history = self.list_reports()
         query = (query or "").strip().lower()
         reference = (reference or "").strip()

@@ -20,6 +20,15 @@ except ImportError as exc:
 
 
 # ==============================================================================
+# Custom Exceptions
+# ==============================================================================
+
+class FaultyReportError(Exception):
+    """Raised when a PDF report contains corrupted, overlapping, or stacked chart readings."""
+    pass
+
+
+# ==============================================================================
 # Helper & Extraction Constants
 # ==============================================================================
 
@@ -469,7 +478,7 @@ def find_marker_label(image, marker_px, marker_py, search_width=280, search_heig
 
 
 # ==============================================================================
-# Simplified Fast Page Routing (Measurement Only)
+# Routing & Classification Logic
 # ==============================================================================
 
 def normalized_channel_numbers(channels):
@@ -544,7 +553,7 @@ def best_label_for_voltage(image, points, voltage):
 
 
 # ==============================================================================
-# Measurement Extraction Loop
+# Measurement Series Extraction & Faulty Detection Guard
 # ==============================================================================
 
 def measurement_series_for_channel(pdf_path, channel, first_chart_page, measurement_pages=None):
@@ -554,41 +563,45 @@ def measurement_series_for_channel(pdf_path, channel, first_chart_page, measurem
     cropped, _ = crop_region(image, region)
     
     red_pts = extract_red_markers(cropped)
+    if not red_pts:
+        return {}
+
+    # Group points along the X-axis (voltage steps)
+    red_groups = group_points_by_x(red_pts, tolerance=18)
+
+    # CHECK 1: Detect multiple red markers at the exact same X-axis position / voltage step
+    for group in red_groups:
+        if len(group["points"]) > 1:
+            raise FaultyReportError(
+                f"Faulty Report: Multiple voltage readings ({len(group['points'])} red markers) "
+                f"detected at same voltage position on Channel {channel} (Page {page_measure + 1})."
+            )
+
+    # CHECK 2: Global aspect ratio check for vertical point alignment/stacking
+    xs = [p[0] for p in red_pts]
+    ys = [p[1] for p in red_pts]
+    x_span = max(xs) - min(xs)
+    y_span = max(ys) - min(ys)
     
-    if red_pts:
-        xs = [p[0] for p in red_pts]
-        ys = [p[1] for p in red_pts]
-        x_span = max(xs) - min(xs)
-        y_span = max(ys) - min(ys)
-        is_vertical_stack = y_span > (x_span * 2)
-    else:
-        is_vertical_stack = False
+    if len(red_pts) > 1 and y_span > (x_span * 2):
+        raise FaultyReportError(
+            f"Faulty Report: Multiple values vertically stacked along the voltage axis "
+            f"on Channel {channel} (Page {page_measure + 1})."
+        )
 
     series = {}
-
-    if is_vertical_stack:
-        sorted_dots = sorted(red_pts, key=lambda p: p[1])
-        for index, dot in enumerate(sorted_dots[: len(MEASUREMENT_LEVELS)]):
-            voltage = MEASUREMENT_LEVELS[index]
-            label = find_marker_label(cropped, dot[0], dot[1])
-            value = parse_numeric_label(str(label)) if label is not None else None
-            if value is not None:
-                value = correct_decimal_outlier(value, voltage)
-                series[voltage] = value
-    else:
-        red_groups = group_points_by_x(red_pts)
-        for index, group in enumerate(red_groups[: len(MEASUREMENT_LEVELS)]):
-            voltage = MEASUREMENT_LEVELS[index]
-            value = best_label_for_voltage(cropped, group["points"], voltage)
-            if value is not None:
-                value = correct_decimal_outlier(value, voltage)
-                series[voltage] = value
+    for index, group in enumerate(red_groups[: len(MEASUREMENT_LEVELS)]):
+        voltage = MEASUREMENT_LEVELS[index]
+        value = best_label_for_voltage(cropped, group["points"], voltage)
+        if value is not None:
+            value = correct_decimal_outlier(value, voltage)
+            series[voltage] = value
 
     return series
 
 
 # ==============================================================================
-# Excel Report Generation ("Channel" Output Formatting)
+# Excel Report Generation ("Channel" Naming Output)
 # ==============================================================================
 
 def _build_styles_xml():
@@ -680,7 +693,7 @@ def build_excel_report(pdf_path, output_path, first_chart_page=2, channels=(1, 2
     ]
     for index, channel in enumerate(channels):
         start_col = 3 + index * 4
-       
+        # Updated output label: "Channel" instead of "Supply"
         row2_cells.append(cell(start_col, 2, f"Channel {channel}", style=2, data_type="inlineStr"))
     rows_xml.append(f'<row r="2" spans="1:{total_columns}">' + "".join(row2_cells) + "</row>")
 
@@ -782,4 +795,13 @@ if __name__ == "__main__":
     parser.add_argument("pdf", help="Path to input PDF file")
     parser.add_argument("-o", "--output", help="Path to output Excel file", default="report.xlsx")
     args = parser.parse_args()
-    build_excel_report(args.pdf, args.output)
+    
+    try:
+        build_excel_report(args.pdf, args.output)
+        print(f"Report written to {args.output}")
+    except FaultyReportError as err:
+        print(f"\n[FAULTY REPORT ALERT]: {err}", file=sys.stderr)
+        sys.exit(2)
+    except Exception as err:
+        print(f"\n[SYSTEM ERROR]: {err}", file=sys.stderr)
+        sys.exit(1)
